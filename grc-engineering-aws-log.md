@@ -1,6 +1,6 @@
 # GRC Engineering for AWS — Running Log
 
-Project context: working through *GRC Engineering for AWS* by AJ Yawn to build hands-on Infrastructure as Code and cloud security skills, ahead of moving into Event-Driven Architecture. Separate from the Torii Gate project, but likely to feed into it later — same underlying principle (declarative, policy-as-code guardrails), different tool and enforcement layer (AWS-native SCP vs. OPA/Rego).
+Project context: hands-on Infrastructure as Code and cloud security skills, ahead of moving into Event-Driven Architecture.
 
 ---
 
@@ -117,10 +117,10 @@ Resources:
 **Decision log:**
 - Initial draft included `cloudtrail:UpdateTrail` alongside `DeleteTrail` and `StopLogging`, reasoning: if a trail is properly configured, no one should need to alter it — protects non-repudiation, not just deletion/stoppage.
 - Explored adding a `Condition` (`StringNotEquals` on `aws:PrincipalArn`) to carve out a break-glass exception role for legitimate updates. Recognized that the SCP condition only creates the technical exception path — actual governance (approval process, MFA-gated role assumption, time-bound access, logging of the exception itself) is a separate process/IAM control layer, not something the SCP JSON handles alone.
-- **Decision: cut `UpdateTrail` for now**, since break-glass/conditional-access concepts haven't been covered in the book yet. Keeping the SCP scoped to what's been learned so far rather than front-loading architecture ahead of the material.
+- **Decision: cut `UpdateTrail` for now**, since break-glass/conditional-access concepts haven't been covered yet. Keeping the SCP scoped to what's been learned so far rather than front-loading architecture ahead of the material.
 
 **Known gap to revisit:**
-- Without `UpdateTrail` denied, the non-repudiation gap re-opens — someone could still modify what CloudTrail logs (e.g., disable specific event types) without deleting or stopping the trail outright. **Revisit once IAM/conditional-access concepts are covered in the book** — likely re-add `UpdateTrail` to the deny list, paired with a break-glass role exception.
+- Without `UpdateTrail` denied, the non-repudiation gap re-opens — someone could still modify what CloudTrail logs (e.g., disable specific event types) without deleting or stopping the trail outright. **Revisit once IAM/conditional-access concepts are covered** — likely re-add `UpdateTrail` to the deny list, paired with a break-glass role exception.
 - No region scoping or resource-level scoping on this SCP (applies universally) — an asymmetry worth being deliberate about compared to the region-scoped SSH policy, if these are documented side by side later.
 - CloudTrail log **destination** protection (e.g., the S3 bucket storing the logs) is a separate, related control not yet addressed — noted as further down the path.
 
