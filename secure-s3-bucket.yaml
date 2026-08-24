@@ -1,0 +1,18 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Secure S3 Bucket Example
+
+Resources:
+    SecureBucket:
+        Type: AWS::S3::Bucket
+        Properties:
+            BucketName: my-secure-bucket-kat
+            PublicAccessBlockConfiguration:
+                BlockPublicAcls: true
+                BlockPublicPolicy: true
+                IgnorePublicAcls: true
+                RestrictPublicBuckets: true
+            BucketEncryption:
+                ServerSideEncryptionConfiguration:
+                    - ServerSideEncryptionByDefault:
+                        SSEAlgorithm: AES256
+            
